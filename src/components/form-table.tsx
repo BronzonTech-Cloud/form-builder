@@ -29,7 +29,7 @@ const FormTable = () => {
                 <TableHeader>
                     <TableRow>
                         <TableHead>Form Name</TableHead>
-                        <TableHead>Created At</TableHead>
+                        <TableHead className="hidden md:block">Created At</TableHead>
                         <TableHead>Fields</TableHead>
                         <TableHead>Actions</TableHead>
                     </TableRow>
@@ -38,7 +38,7 @@ const FormTable = () => {
                     {forms.map((form) => (
                         <TableRow key={form.id}>
                             <TableCell>{form.name}</TableCell>
-                            <TableCell>
+                            <TableCell className="hidden md:block">
                                 {new Date(form.createdAt).toLocaleDateString()}
                             </TableCell>
                             <TableCell>{form.fields.length} fields</TableCell>
