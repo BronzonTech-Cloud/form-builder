@@ -70,7 +70,7 @@ const CreateForm = () => {
             });
             toast.success("Form created successfully");
             router.push("/forms");
-        } catch (error) {
+        } catch {
             toast.error("Failed to create form");
         }
     };

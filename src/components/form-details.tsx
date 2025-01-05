@@ -13,7 +13,7 @@ import { useForms } from "@/lib/form";
 import { FormField } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -77,24 +77,26 @@ const generateValidationSchema = (fields: FormField[]) => {
 
 
 const FormDetails = () => {
-
     const params = useParams();
+    const [form] = useForm((state) => [state.form]);
+    const [loading] = useForm((state) => [state.loading]);
 
-    const formId = params.id as string;
-    const form = useForms().getForm(formId);
+    useEffect(() => {
+        if (params.id) {
+            useForm.getState().getForm(params.id as string);
+        }
+    }, [params.id]);
 
-    if (!form) {
+    if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center mt-20">
-                <h4 className="text-lg font-medium text-center">
-                    Form not found
-                </h4>
+            <div className="flex items-center justify-center h-full">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
             </div>
         );
-    };
+    }
 
     const validationSchema = useMemo(() =>
-        generateValidationSchema(form.fields), [form.fields]);
+        generateValidationSchema(form?.fields || []), [form?.fields]);
 
     type FormSchema = z.infer<typeof validationSchema>;
 
@@ -107,12 +109,22 @@ const FormDetails = () => {
         resolver: zodResolver(validationSchema),
         defaultValues: useMemo(() => {
             const defaults: Record<string, any> = {};
-            form.fields.forEach(field => {
+            form?.fields?.forEach(field => {
                 defaults[field.name] = field.type === "checkbox" ? false : "";
             });
             return defaults;
-        }, [form.fields]),
+        }, [form?.fields]),
     });
+
+    if (!form) {
+        return (
+            <div className="flex items-center justify-center h-full">
+                <h4 className="text-xl font-semibold text-center">
+                    Form not found
+                </h4>
+            </div>
+        );
+    }
 
     const handleSelectChange = (name: string, value: string) => {
         setValue(name, value, { shouldValidate: true });

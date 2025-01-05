@@ -1,4 +1,3 @@
-import Navbar from "@/components/navbar";
 import CreateForm from "@/components/create-form";
 
 const CreateFormPage = () => {
